@@ -43,8 +43,8 @@
         _selectedButton = [UIButton buttonWithType:UIButtonTypeCustom];
         _selectedButton.contentMode = UIViewContentModeTopRight;
         _selectedButton.adjustsImageWhenHighlighted = NO;
-        [_selectedButton setImage:[UIImage imageForResourcePath:@"MWPhotoBrowser.bundle/ImageSelectedSmallOff" ofType:@"png" inBundle:[NSBundle bundleForClass:[self class]]] forState:UIControlStateNormal];
-        [_selectedButton setImage:[UIImage imageForResourcePath:@"MWPhotoBrowser.bundle/ImageSelectedSmallOn" ofType:@"png" inBundle:[NSBundle bundleForClass:[self class]]] forState:UIControlStateSelected];
+        [_selectedButton setImage:[UIImage imageForResourcePath:@"MWPhotoBrowser.bundle/ImageSelectedSmallOff" ofType:@"png" inBundle:[NSBundle bundleForClass:[MWGridCell class]]] forState:UIControlStateNormal];
+        [_selectedButton setImage:[UIImage imageForResourcePath:@"MWPhotoBrowser.bundle/ImageSelectedSmallOn" ofType:@"png" inBundle:[NSBundle bundleForClass:[MWGridCell class]]] forState:UIControlStateSelected];
         [_selectedButton addTarget:self action:@selector(selectionButtonPressed) forControlEvents:UIControlEventTouchDown];
         _selectedButton.hidden = YES;
         _selectedButton.frame = CGRectMake(0, 0, 44, 44);
@@ -179,7 +179,7 @@
     if (![_photo respondsToSelector:@selector(emptyImage)] || !_photo.emptyImage) {
         if (!_loadingError) {
             _loadingError = [UIImageView new];
-            _loadingError.image = [UIImage imageForResourcePath:@"MWPhotoBrowser.bundle/ImageError" ofType:@"png" inBundle:[NSBundle bundleForClass:[self class]]];
+            _loadingError.image = [UIImage imageForResourcePath:@"MWPhotoBrowser.bundle/ImageError" ofType:@"png" inBundle:[NSBundle bundleForClass:[MWGridCell class]]];
             _loadingError.userInteractionEnabled = NO;
             [_loadingError sizeToFit];
             [self addSubview:_loadingError];
