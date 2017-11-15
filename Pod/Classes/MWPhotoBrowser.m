@@ -375,8 +375,12 @@
     }
     
     // Layout
+    if (@available(iOS 11.0, *)) {
+        // call layoutVisiblePages only once for iOS 11
+        // https://github.com/mwaterfall/MWPhotoBrowser/issues/620#issuecomment-339584308
+        [self layoutVisiblePages];
+    }
     [self.view setNeedsLayout];
-
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -477,7 +481,14 @@
 
 - (void)viewWillLayoutSubviews {
     [super viewWillLayoutSubviews];
-    [self layoutVisiblePages];
+    
+    // for iOS 11 layoutVisiblePages should called only once at viewWillAppear, because in iOS 11 viewWillLayoutSubviews will called several times
+    // https://github.com/mwaterfall/MWPhotoBrowser/issues/620#issuecomment-339584308
+    if (@available(iOS 11.0, *)) {
+        // do nothing
+    } else {
+        [self layoutVisiblePages];
+    }
 }
 
 - (void)layoutVisiblePages {
