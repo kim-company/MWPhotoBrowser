@@ -76,7 +76,10 @@
     _recycledPages = [[NSMutableSet alloc] init];
     _photos = [[NSMutableArray alloc] init];
     _thumbPhotos = [[NSMutableArray alloc] init];
-    _currentGridContentOffset = CGPointMake(0, CGFLOAT_MAX);
+	if (@available(iOS 11.0, *)) {
+	} else {
+		_currentGridContentOffset = CGPointMake(0, CGFLOAT_MAX);
+	}
     _didSavePreviousStateOfNavBar = NO;
     self.automaticallyAdjustsScrollViewInsets = NO;
     
@@ -170,8 +173,8 @@
     // Toolbar Items
     if (self.displayNavArrows) {
         NSString *arrowPathFormat = @"MWPhotoBrowser.bundle/UIBarButtonItemArrow%@";
-        UIImage *previousButtonImage = [UIImage imageForResourcePath:[NSString stringWithFormat:arrowPathFormat, @"Left"] ofType:@"png" inBundle:[NSBundle bundleForClass:[self class]]];
-        UIImage *nextButtonImage = [UIImage imageForResourcePath:[NSString stringWithFormat:arrowPathFormat, @"Right"] ofType:@"png" inBundle:[NSBundle bundleForClass:[self class]]];
+        UIImage *previousButtonImage = [UIImage imageForResourcePath:[NSString stringWithFormat:arrowPathFormat, @"Left"] ofType:@"png" inBundle:[NSBundle bundleForClass:[MWPhotoBrowser class]]];
+        UIImage *nextButtonImage = [UIImage imageForResourcePath:[NSString stringWithFormat:arrowPathFormat, @"Right"] ofType:@"png" inBundle:[NSBundle bundleForClass:[MWPhotoBrowser class]]];
         _previousButton = [[UIBarButtonItem alloc] initWithImage:previousButtonImage style:UIBarButtonItemStylePlain target:self action:@selector(gotoPreviousPage)];
         _nextButton = [[UIBarButtonItem alloc] initWithImage:nextButtonImage style:UIBarButtonItemStylePlain target:self action:@selector(gotoNextPage)];
     }
@@ -244,7 +247,7 @@
     // Left button - Grid
     if (_enableGrid) {
         hasItems = YES;
-        [items addObject:[[UIBarButtonItem alloc] initWithImage:[UIImage imageForResourcePath:@"MWPhotoBrowser.bundle/UIBarButtonItemGrid" ofType:@"png" inBundle:[NSBundle bundleForClass:[self class]]] style:UIBarButtonItemStylePlain target:self action:@selector(showGridAnimated)]];
+        [items addObject:[[UIBarButtonItem alloc] initWithImage:[UIImage imageForResourcePath:@"MWPhotoBrowser.bundle/UIBarButtonItemGrid" ofType:@"png" inBundle:[NSBundle bundleForClass:[MWPhotoBrowser class]]] style:UIBarButtonItemStylePlain target:self action:@selector(showGridAnimated)]];
     } else {
         [items addObject:fixedSpace];
     }
@@ -372,8 +375,12 @@
     }
     
     // Layout
+    if (@available(iOS 11.0, *)) {
+        // call layoutVisiblePages only once for iOS 11
+        // https://github.com/mwaterfall/MWPhotoBrowser/issues/620#issuecomment-339584308
+        [self layoutVisiblePages];
+    }
     [self.view setNeedsLayout];
-
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -474,7 +481,14 @@
 
 - (void)viewWillLayoutSubviews {
     [super viewWillLayoutSubviews];
-    [self layoutVisiblePages];
+    
+    // for iOS 11 layoutVisiblePages should called only once at viewWillAppear, because in iOS 11 viewWillLayoutSubviews will called several times
+    // https://github.com/mwaterfall/MWPhotoBrowser/issues/620#issuecomment-339584308
+    if (@available(iOS 11.0, *)) {
+        // do nothing
+    } else {
+        [self layoutVisiblePages];
+    }
 }
 
 - (void)layoutVisiblePages {
@@ -807,12 +821,12 @@
             // Add selected button
             if (self.displaySelectionButtons) {
                 UIButton *selectedButton = [UIButton buttonWithType:UIButtonTypeCustom];
-                [selectedButton setImage:[UIImage imageForResourcePath:@"MWPhotoBrowser.bundle/ImageSelectedOff" ofType:@"png" inBundle:[NSBundle bundleForClass:[self class]]] forState:UIControlStateNormal];
+                [selectedButton setImage:[UIImage imageForResourcePath:@"MWPhotoBrowser.bundle/ImageSelectedOff" ofType:@"png" inBundle:[NSBundle bundleForClass:[MWPhotoBrowser class]]] forState:UIControlStateNormal];
                 UIImage *selectedOnImage;
                 if (self.customImageSelectedIconName) {
                     selectedOnImage = [UIImage imageNamed:self.customImageSelectedIconName];
                 } else {
-                    selectedOnImage = [UIImage imageForResourcePath:@"MWPhotoBrowser.bundle/ImageSelectedOn" ofType:@"png" inBundle:[NSBundle bundleForClass:[self class]]];
+                    selectedOnImage = [UIImage imageForResourcePath:@"MWPhotoBrowser.bundle/ImageSelectedOn" ofType:@"png" inBundle:[NSBundle bundleForClass:[MWPhotoBrowser class]]];
                 }
                 [selectedButton setImage:selectedOnImage forState:UIControlStateSelected];
                 [selectedButton sizeToFit];
@@ -971,7 +985,16 @@
     CGFloat height = 44;
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone &&
         UIInterfaceOrientationIsLandscape(orientation)) height = 32;
-	return CGRectIntegral(CGRectMake(0, self.view.bounds.size.height - height, self.view.bounds.size.width, height));
+    
+    // support iPhone X safe area
+    // https://github.com/mwaterfall/MWPhotoBrowser/issues/618#issue-261727922
+    CGFloat adjust = 0;
+    if (@available(iOS 11.0, *)) {
+        //Account for possible notch
+        UIEdgeInsets safeArea = [[UIApplication sharedApplication] keyWindow].safeAreaInsets;
+        adjust = safeArea.bottom;
+    }
+    return CGRectIntegral(CGRectMake(0, self.view.bounds.size.height - height - adjust, self.view.bounds.size.width, height));
 }
 
 - (CGRect)frameForCaptionView:(MWCaptionView *)captionView atIndex:(NSUInteger)index {
@@ -1133,7 +1156,10 @@
     
     // Init grid controller
     _gridController = [[MWGridViewController alloc] init];
-    _gridController.initialContentOffset = _currentGridContentOffset;
+	if (@available(iOS 11.0, *)) {
+	} else {
+		_gridController.initialContentOffset = _currentGridContentOffset;
+	}
     _gridController.browser = self;
     _gridController.selectionMode = _displaySelectionButtons;
     _gridController.view.frame = self.view.bounds;
@@ -1179,8 +1205,11 @@
     
     if (!_gridController) return;
     
-    // Remember previous content offset
-    _currentGridContentOffset = _gridController.collectionView.contentOffset;
+    if (@available(iOS 11.0, *)) {
+    } else {
+        // Remember previous content offset
+        _currentGridContentOffset = _gridController.collectionView.contentOffset;
+    }
     
     BOOL showRightBarButtonItem = NO;
     
