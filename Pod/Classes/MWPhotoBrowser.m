@@ -1177,8 +1177,8 @@
     [_gridController adjustOffsetsAsRequired];
     
     // Hide current right button on nav bar if it exists
-    if (self.navigationItem.rightBarButtonItem) {
-        _gridPreviousRightNavItem = self.navigationItem.rightBarButtonItem;
+    if (self.navigationItem.rightBarButtonItem == _actionButton) {
+        _gridPreviousRightNavItem = _actionButton;
         [self.navigationItem setRightBarButtonItem:nil animated:YES];
     } else {
         _gridPreviousRightNavItem = nil;
