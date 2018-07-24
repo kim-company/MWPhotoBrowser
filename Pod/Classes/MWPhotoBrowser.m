@@ -491,14 +491,14 @@
     }
 }
 
-- (void)viewDidLayoutSubviews {
-	[super viewDidLayoutSubviews];
+- (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
+	[super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
 
-	if (!CGRectEqualToRect(self.view.bounds, _oldViewBounds)) {
+	[coordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
+		// Nothing to do
+	} completion:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
 		[self layoutVisiblePages];
-
-		_oldViewBounds = self.view.bounds;
-	}
+	}];
 }
 
 - (void)layoutVisiblePages {

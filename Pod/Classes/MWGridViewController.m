@@ -15,7 +15,6 @@
     
     // Store margins for current setup
     CGFloat _margin, _gutter, _marginL, _gutterL, _columns, _columnsL;
-	CGRect _oldViewBounds;
     
 }
 
@@ -83,14 +82,14 @@
     [self performLayout];
 }
 
-- (void)viewDidLayoutSubviews {
-    [super viewDidLayoutSubviews];
+- (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
+	[super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
 
-	if (!CGRectEqualToRect(self.view.bounds, _oldViewBounds)) {
+	[coordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
+		// Nothing to do
+	} completion:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
 		[self.collectionView.collectionViewLayout invalidateLayout];
-
-		_oldViewBounds = self.view.bounds;
-	}
+	}];
 }
 
 - (void)adjustOffsetsAsRequired {
