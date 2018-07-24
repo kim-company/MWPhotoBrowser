@@ -29,6 +29,7 @@
     NSUInteger _previousPageIndex;
     CGRect _previousLayoutBounds;
 	NSUInteger _pageIndexBeforeRotation;
+	CGRect _oldViewBounds;
 	
 	// Navigation & controls
 	UIToolbar *_toolbar;

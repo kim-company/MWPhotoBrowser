@@ -15,6 +15,7 @@
     
     // Store margins for current setup
     CGFloat _margin, _gutter, _marginL, _gutterL, _columns, _columnsL;
+	CGRect _oldViewBounds;
     
 }
 
@@ -84,6 +85,12 @@
 
 - (void)viewDidLayoutSubviews {
     [super viewDidLayoutSubviews];
+
+	if (!CGRectEqualToRect(self.view.bounds, _oldViewBounds)) {
+		[self.collectionView.collectionViewLayout invalidateLayout];
+
+		_oldViewBounds = self.view.bounds;
+	}
 }
 
 - (void)adjustOffsetsAsRequired {

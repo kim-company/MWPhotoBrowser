@@ -491,6 +491,16 @@
     }
 }
 
+- (void)viewDidLayoutSubviews {
+	[super viewDidLayoutSubviews];
+
+	if (!CGRectEqualToRect(self.view.bounds, _oldViewBounds)) {
+		[self layoutVisiblePages];
+
+		_oldViewBounds = self.view.bounds;
+	}
+}
+
 - (void)layoutVisiblePages {
     
 	// Flag
