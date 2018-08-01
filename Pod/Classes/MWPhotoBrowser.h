@@ -62,6 +62,7 @@
 @property (nonatomic, strong) NSString *customImageSelectedSmallIconName;
 
 // Init
+- (id)init;
 - (id)initWithPhotos:(NSArray *)photosArray;
 - (id)initWithDelegate:(id <MWPhotoBrowserDelegate>)delegate;
 

@@ -491,6 +491,16 @@
     }
 }
 
+- (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
+	[super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
+
+	[coordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
+		// Nothing to do
+	} completion:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
+		[self layoutVisiblePages];
+	}];
+}
+
 - (void)layoutVisiblePages {
     
 	// Flag
